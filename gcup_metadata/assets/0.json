@@ -1,0 +1,25 @@
+{
+  "name": "Green Cup",
+  "symbol": "GCUP",
+  "description": "Earn Green Cup coins when players score birdies, eagles, and holes-in-one. Coins are burned when bogeys happen. Redeem your coins for world-class golf experiences.",
+  "image": "https://gateway.pinata.cloud/ipfs/bafkreicaa6xsbecmb5nmehmr4aaqhg3kyknfl3ehvtnecg7mtpqlztrniu",
+  "uri": "https://gcup.io",
+  "seller_fee_basis_points": 0,
+  "creators": [
+    {
+      "address": "DYWbNN7hnPueFhzahRNGZhiK7MyXwo8baffue6ErcfgR",
+      "verified": true,
+      "share": 100
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "https://gateway.pinata.cloud/ipfs/bafkreicaa6xsbecmb5nmehmr4aaqhg3kyknfl3ehvtnecg7mtpqlztrniu",
+        "type": "image/png"
+      }
+    ],
+    "category": "image"
+  }
+}
+

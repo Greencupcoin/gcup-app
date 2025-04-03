@@ -1,0 +1,13 @@
+{
+  "name": "Green Cup",
+  "symbol": "GCUP",
+  "uri": "https://gateway.pinata.cloud/ipfs/bafkreiaznz7rsnabmxxttypoujfg23ado3a7y6shcov3yes6jxw5uk2pku",
+  "seller_fee_basis_points": 0,
+  "creators": [
+    {
+      "address": "DYWbNN7hnPueFhzahRNGZhiK7MyXwo8baffue6ErcfgR",
+      "verified": true,
+      "share": 100
+    }
+  ]
+}

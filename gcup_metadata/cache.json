@@ -1,0 +1,18 @@
+{
+  "program": {
+    "candyMachine": "",
+    "candyGuard": "",
+    "candyMachineCreator": "",
+    "collectionMint": ""
+  },
+  "items": {
+    "0": {
+      "name": "Green Cup",
+      "image_hash": "4007af20904c0f5ac21d91e001039b6ac29a55ec87acda411bec9be0bcce2d45",
+      "image_link": "https://gateway.pinata.cloud/ipfs/bafkreicaa6xsbecmb5nmehmr4aaqhg3kyknfl3ehvtnecg7mtpqlztrniu",
+      "metadata_hash": "196e7f19340165ef39e1eea24a6d6c0376c1fc7a4713abbc125e4dedda2b4f55",
+      "metadata_link": "https://gateway.pinata.cloud/ipfs/QmWA2PqDN7Cshk9A4hGn8YKgtEFzMhRUcaSCMesBqzs2n7/0.json",
+      "onChain": false
+    }
+  }
+}
