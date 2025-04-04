@@ -41,7 +41,7 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
       setPlayers(data.players);
       setError(null);
     } catch (err) {
-      console.error("\u274c Error fetching golf field:", err.message);
+      console.error("❌ Error fetching golf field:", err.message);
       setError("Failed to load players. Please try again later.");
     } finally {
       setLoading(false);
@@ -50,7 +50,7 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
 
   const fetchScoring = async () => {
     try {
-      const res = await fetch("http://localhost:5001/parsed-scores");
+      const res = await fetch("https://gcup-backend.onrender.com/parsed-scores");
       const data = await res.json();
 
       const logs = [];
@@ -81,7 +81,7 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
 
       setScoreLog(logs);
     } catch (err) {
-      console.error("Error fetching scoring:", err);
+      console.error("❌ Error fetching scoring:", err);
     }
   };
 
@@ -100,7 +100,7 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
       setHasSubmittedTeam(true);
       setShowSuccessMessage(true);
     } catch (error) {
-      console.error("Error submitting team:", error);
+      console.error("❌ Error submitting team:", error);
     }
   };
 
@@ -164,3 +164,4 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
     </div>
   );
 }
+
