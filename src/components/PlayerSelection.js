@@ -31,7 +31,7 @@ const PlayerSelection = () => {
     const fetchBalance = async () => {
       if (!publicKey) return;
       try {
-        const response = await fetch(`http://localhost:5001/api/balance/${publicKey.toString()}`);
+        const response = await fetch(`https://gcup-backend.onrender.com/api/balance/${publicKey.toString()}`);
         const data = await response.json();
         setGcupBalance(data.balance);
       } catch (err) {
@@ -47,7 +47,7 @@ const PlayerSelection = () => {
 
   const fetchPlayers = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/golf-field');
+      const response = await fetch('https://gcup-backend.onrender.com/api/golf-field');
       const data = await response.json();
       setPlayers(data.players);
       setTournament(data.tournament);
@@ -73,7 +73,7 @@ const PlayerSelection = () => {
     const user_id = publicKey?.toString() || uuidv4(); // use wallet address if available
     localStorage.setItem("gcup_user_id", user_id);
 
-    const res = await fetch("http://localhost:5001/api/submit-team", {
+    const res = await fetch("https://gcup-backend.onrender.com/api/submit-team", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
