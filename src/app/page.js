@@ -36,7 +36,7 @@ export default function Home() {
     const fetchBalance = async () => {
       if (!publicKey) return;
       try {
-        const res = await fetch(`http://localhost:5001/api/balance/${publicKey.toString()}`);
+        const res = await fetch(`https://gcup-backend.onrender.com/api/balance/${publicKey.toString()}`);
         const data = await res.json();
         setGcupBalance(data.balance);
       } catch (err) {
