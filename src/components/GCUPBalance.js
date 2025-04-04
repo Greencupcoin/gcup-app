@@ -20,7 +20,7 @@ export default function GCUPBalance() {
             setError(null);
 
             try {
-                const response = await fetch(`http://localhost:5001/api/balance/${publicKey.toString()}`);
+                const response = await fetch(`https://gcup-backend.onrender.com/api/balance/${publicKey.toString()}`);
                 if (!response.ok) throw new Error('Failed to fetch balance');
                 const data = await response.json();
                 setBalance(data.balance);
