@@ -25,7 +25,7 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
     if (!hasSubmittedTeam) return;
     const interval = setInterval(() => {
       fetchScoring();
-    }, 60000);
+    }, 300000); // 🕐 every 5 minutes
     return () => clearInterval(interval);
   }, [hasSubmittedTeam]);
 
@@ -164,4 +164,5 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
     </div>
   );
 }
+
 
