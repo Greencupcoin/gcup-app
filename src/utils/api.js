@@ -1,5 +1,5 @@
-// Use your LAN IP for mobile device compatibility
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://172.20.10.14:5001";
+// Use your live backend as the default
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://gcup-backend.onrender.com";
 const GCUP_MINT_ADDRESS = "Bs7k2iTXZLST6JcJr91g2wGjEKm1LwG7L6Kbggkcvxk";
 
 /**
@@ -51,5 +51,3 @@ export async function submitTeam({ wallet_address, players }) {
     throw new Error(`Network error while submitting team: ${error.message}`);
   }
 }
-
-
