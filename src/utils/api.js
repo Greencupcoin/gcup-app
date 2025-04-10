@@ -26,7 +26,7 @@ export async function submitTeam({ wallet_address, players }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        user_id: wallet_address,
+        wallet_address, // ✅ Match backend expectation
         players,
         mint_address: GCUP_MINT_ADDRESS,
       }),
