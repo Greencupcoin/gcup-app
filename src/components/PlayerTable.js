@@ -3,9 +3,6 @@
 import { useEffect, useState } from "react";
 import { fetchGolfField } from "../utils/api";
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
-import { PublicKey } from '@solana/web3.js';
-
-const GCUP_MINT = new PublicKey('Bs7k2iTXZLST6JcJr91g2wGjEKm1LwG7L6Kbggkcvxk');
 
 export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSubmit, isSubmitting }) {
   const { publicKey, connected, connecting } = useWallet();
