@@ -20,12 +20,11 @@ export async function fetchGolfField() {
  * Submits a selected team to the backend for processing GCUP rewards.
  */
 export async function submitTeam({ wallet_address, players }) {
-  console.log("📦 Submitting to backend:", {
-    wallet_address,
-    players,
-    playerCount: players?.length || 0,
-    playerKeys: players?.[0] ? Object.keys(players[0]) : [],
-  });
+  console.log("📦 Submitting to backend:");
+  console.log("→ wallet_address:", wallet_address);
+  console.log("→ playerCount:", players?.length || 0);
+  console.log("→ playerKeys (first player):", players?.[0] ? Object.keys(players[0]) : []);
+  console.log("→ players array:", players);
 
   try {
     const res = await fetch(`${API_BASE_URL}/api/submit-team`, {
