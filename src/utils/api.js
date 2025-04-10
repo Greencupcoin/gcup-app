@@ -20,6 +20,11 @@ export async function fetchGolfField() {
  * Submits a selected team to the backend for processing GCUP rewards.
  */
 export async function submitTeam({ wallet_address, players }) {
+  console.log("📦 Submitting to backend:", {
+    wallet_address,
+    players,
+  });
+
   try {
     const res = await fetch(`${API_BASE_URL}/api/submit-team`, {
       method: "POST",
@@ -32,6 +37,7 @@ export async function submitTeam({ wallet_address, players }) {
 
     if (!res.ok) {
       const errorData = await res.json();
+      console.error("❌ Backend responded with:", errorData);
       throw {
         response: {
           data: errorData,
