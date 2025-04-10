@@ -5,14 +5,23 @@ import { fetchGolfField } from "../utils/api";
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 
 export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSubmit, isSubmitting }) {
-  const { publicKey, connected, connecting } = useWallet();
-  const { connection } = useConnection();
+  const { publicKey, connected } = useWallet();
   const [players, setPlayers] = useState([]);
   const [scoreLog, setScoreLog] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hasSubmittedTeam, setHasSubmittedTeam] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  const SCORING_MAP = {
+    "Birdie": 10,
+    "Eagle": 50,
+    "Hole-in-One": 500,
+    "Hole in One": 500,
+    "Bogey": -10,
+    "Double Bogey": -20,
+    "Worse Than Double Bogey": -20,
+  };
 
   useEffect(() => {
     loadGolfData();
@@ -24,7 +33,7 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
       fetchScoring();
     }, 60000);
     return () => clearInterval(interval);
-  }, [hasSubmittedTeam]);
+  }, [hasSubmittedTeam, selectedPlayers]);
 
   const loadGolfData = async () => {
     try {
@@ -46,37 +55,56 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
   };
 
   const fetchScoring = async () => {
+    if (!connected || !publicKey) return;
+
     try {
       const res = await fetch("https://gcup-backend.onrender.com/parsed-scores");
       const data = await res.json();
+      const newLogs = [];
 
-      const logs = [];
-
-      selectedPlayers.forEach((player) => {
+      for (const player of selectedPlayers) {
         const result = data.find(
           (entry) => entry.player.toLowerCase() === player.name.toLowerCase()
         );
 
         if (result && result.scoring_events) {
-          result.scoring_events.forEach((event) => {
-            let value = 0;
-            if (event === "Birdie") value = 10;
-            else if (event === "Eagle") value = 50;
-            else if (event === "Hole-in-One" || event === "Hole in One") value = 500;
-            else if (event === "Bogey") value = -10;
-            else if (event === "Double Bogey" || event === "Worse Than Double Bogey") value = -20;
+          for (const event of result.scoring_events) {
+            const value = SCORING_MAP[event];
+            if (typeof value !== "number") continue;
 
-            logs.push({
+            // Prevent duplicate scoring
+            const alreadyLogged = scoreLog.some(
+              (log) =>
+                log.player === player.name &&
+                log.event === event
+            );
+            if (alreadyLogged) continue;
+
+            newLogs.push({
               player: player.name,
               event,
               value,
               timestamp: new Date().toISOString(),
             });
-          });
-        }
-      });
 
-      setScoreLog(logs);
+            // Mint or burn token
+            await fetch("https://gcup-backend.onrender.com/api/mint-or-burn", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                wallet_address: publicKey.toString(),
+                value,
+              }),
+            });
+
+            console.log(`✅ ${event} for ${player.name}: ${value > 0 ? "Minted" : "Burned"} ${Math.abs(value)} GCUP`);
+          }
+        }
+      }
+
+      if (newLogs.length > 0) {
+        setScoreLog((prev) => [...prev, ...newLogs]);
+      }
     } catch (err) {
       console.error("❌ Error fetching scoring:", err);
     }
