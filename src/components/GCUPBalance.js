@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 
 export default function GCUPBalance() {
-    const { publicKey } = useWallet();
+    const { publicKey, connected, connecting } = useWallet();
     const [balance, setBalance] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchBalance = async () => {
-            if (!publicKey) {
+            if (!connected || !publicKey) {
                 setBalance(null);
                 return;
             }
@@ -36,9 +36,14 @@ export default function GCUPBalance() {
         // Set up polling every 30 seconds
         const interval = setInterval(fetchBalance, 30000);
         return () => clearInterval(interval);
-    }, [publicKey]);
+    }, [publicKey, connected]);
 
-    if (!publicKey) return null;
+    if (connecting) return <div className="bg-[#1a1a2f] p-4 rounded-lg shadow-lg">
+        <h3 className="text-lg font-semibold text-purple-300 mb-2">GCUP Balance</h3>
+        <p className="text-gray-400">Connecting to wallet...</p>
+    </div>;
+
+    if (!connected || !publicKey) return null;
 
     return (
         <div className="bg-[#1a1a2f] p-4 rounded-lg shadow-lg">
@@ -55,4 +60,3 @@ export default function GCUPBalance() {
         </div>
     );
 }
-

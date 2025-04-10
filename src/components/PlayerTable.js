@@ -8,7 +8,7 @@ import { PublicKey } from '@solana/web3.js';
 const GCUP_MINT = new PublicKey('Bs7k2iTXZLST6JcJr91g2wGjEKm1LwG7L6Kbggkcvxk');
 
 export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSubmit, isSubmitting }) {
-  const { publicKey } = useWallet();
+  const { publicKey, connected, connecting } = useWallet();
   const { connection } = useConnection();
   const [players, setPlayers] = useState([]);
   const [scoreLog, setScoreLog] = useState([]);
@@ -95,6 +95,11 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
   };
 
   const handleSubmit = async () => {
+    if (!connected || !publicKey) {
+      alert("Please connect your wallet to submit a team");
+      return;
+    }
+
     try {
       await onSubmit();
       setHasSubmittedTeam(true);
@@ -161,7 +166,20 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
           </div>
         </div>
       )}
+
+      <div className="flex justify-center mt-6">
+        <button
+          className={`px-6 py-3 rounded-lg font-semibold transition ${
+            selectedPlayers.length === 5 && connected && !isSubmitting
+              ? 'bg-purple-600 text-white hover:bg-purple-700'
+              : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+          }`}
+          disabled={selectedPlayers.length !== 5 || !connected || isSubmitting}
+          onClick={handleSubmit}
+        >
+          {!connected ? "Connect Wallet to Submit" : isSubmitting ? "Submitting..." : "Submit My Team"}
+        </button>
+      </div>
     </div>
   );
 }
-

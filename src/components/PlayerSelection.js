@@ -13,7 +13,7 @@ const PlayerSelection = () => {
   const [error, setError] = useState(null);
   const [gcupBalance, setGcupBalance] = useState(null);
 
-  const { publicKey } = useWallet();
+  const { publicKey, connected, connecting } = useWallet();
 
   useEffect(() => {
     fetchPlayers();
@@ -29,7 +29,7 @@ const PlayerSelection = () => {
 
   useEffect(() => {
     const fetchBalance = async () => {
-      if (!publicKey) return;
+      if (!connected || !publicKey) return;
       try {
         const response = await fetch(`https://gcup-backend.onrender.com/api/balance/${publicKey.toString()}`);
         const data = await response.json();
@@ -43,7 +43,7 @@ const PlayerSelection = () => {
     fetchBalance();
     const interval = setInterval(fetchBalance, 30000);
     return () => clearInterval(interval);
-  }, [publicKey]);
+  }, [publicKey, connected]);
 
   const fetchPlayers = async () => {
     try {
@@ -70,20 +70,35 @@ const PlayerSelection = () => {
   };
 
   const handleSubmitTeam = async () => {
-    const user_id = publicKey?.toString() || uuidv4(); // use wallet address if available
-    localStorage.setItem("gcup_user_id", user_id);
+    if (!connected || !publicKey) {
+      alert("Please connect your wallet to submit a team");
+      return;
+    }
 
-    const res = await fetch("https://gcup-backend.onrender.com/api/submit-team", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user_id,
-        players: selectedPlayers,
-      }),
-    });
+    const wallet_address = publicKey.toString();
+    localStorage.setItem("gcup_wallet_address", wallet_address);
 
-    const data = await res.json();
-    alert(data.message || "Team submitted.");
+    try {
+      const res = await fetch("https://gcup-backend.onrender.com/api/submit-team", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          wallet_address,
+          players: selectedPlayers,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Failed to submit team");
+      }
+
+      const data = await res.json();
+      alert(data.message || "Team submitted successfully.");
+    } catch (error) {
+      console.error("Error submitting team:", error);
+      alert(error.message || "Failed to submit team. Please try again.");
+    }
   };
 
   if (loading) return <div className="text-center p-4 text-white">Loading players...</div>;
@@ -93,7 +108,7 @@ const PlayerSelection = () => {
     <div className="p-6 bg-[#0c0c1b] min-h-screen text-white">
       <div className="flex flex-wrap justify-between items-center mb-6">
         <h1 className="text-xl font-bold text-purple-300">Select Your Team</h1>
-        {publicKey && (
+        {connected && publicKey && (
           <div className="bg-[#1a1a2f] px-4 py-2 rounded-lg text-green-400 font-semibold">
             GCUP Balance: {gcupBalance !== null ? gcupBalance.toFixed(2) : "Loading..."}
           </div>
@@ -132,14 +147,14 @@ const PlayerSelection = () => {
 
         <button
           className={`px-4 py-2 rounded font-semibold transition ${
-            selectedPlayers.length === 5
+            selectedPlayers.length === 5 && connected
               ? 'bg-purple-600 text-white hover:bg-purple-700'
               : 'bg-gray-700 text-gray-400 cursor-not-allowed'
           }`}
-          disabled={selectedPlayers.length !== 5}
+          disabled={selectedPlayers.length !== 5 || !connected}
           onClick={handleSubmitTeam}
         >
-          Submit My Team
+          {!connected ? "Connect Wallet to Submit" : "Submit My Team"}
         </button>
       </div>
 
@@ -191,5 +206,4 @@ const PlayerSelection = () => {
 };
 
 export default PlayerSelection;
-
 
