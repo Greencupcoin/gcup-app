@@ -12,10 +12,19 @@ import { Jura } from "next/font/google";
 const jura = Jura({ subsets: ["latin"] });
 
 export default function Home() {
-  const { publicKey, connected } = useWallet();
+  const { publicKey, connected, connecting, disconnect } = useWallet();
   const [gcupBalance, setGcupBalance] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
+  const [walletAddress, setWalletAddress] = useState("");
+
+  useEffect(() => {
+    if (connected && publicKey) {
+      setWalletAddress(publicKey.toBase58());
+    } else {
+      setWalletAddress("");
+    }
+  }, [connected, publicKey]);
 
   useEffect(() => {
     const saved = localStorage.getItem("gcup_selected_team");
@@ -34,7 +43,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchBalance = async () => {
-      if (!publicKey) return;
+      if (!connected || !publicKey) return;
       try {
         const res = await fetch(`https://gcup-backend.onrender.com/api/balance/${publicKey.toString()}`);
         const data = await res.json();
@@ -46,7 +55,9 @@ export default function Home() {
     };
 
     fetchBalance();
-  }, [publicKey]);
+    const interval = setInterval(fetchBalance, 30000);
+    return () => clearInterval(interval);
+  }, [publicKey, connected]);
 
   const handleSubmitTeam = async () => {
     if (!connected || !publicKey) {
@@ -99,7 +110,7 @@ export default function Home() {
           <div className="flex flex-col items-start sm:items-end gap-3 w-full sm:w-auto">
             <WalletMultiButton className="!bg-[#1a1a2f] !rounded-lg !px-6 !py-2 !text-white !font-semibold w-full sm:w-auto" />
 
-            {publicKey && (
+            {connected && publicKey && (
               <div className="flex items-center gap-3 bg-[#1a1a2f] text-white font-semibold px-6 py-2 rounded-lg w-full sm:w-auto justify-between">
                 <div className="flex items-center gap-2">
                   <Image src="/gcup.png" alt="GCUP Icon" width={20} height={20} />
@@ -108,6 +119,12 @@ export default function Home() {
                 <span className="text-green-400 text-sm">
                   {gcupBalance !== null ? `${gcupBalance.toFixed(2)} GCUP` : "Loading..."}
                 </span>
+              </div>
+            )}
+
+            {connected && (
+              <div className="text-xs text-gray-400">
+                Connected: {walletAddress.substring(0, 4)}...{walletAddress.substring(walletAddress.length - 4)}
               </div>
             )}
           </div>
@@ -119,10 +136,14 @@ export default function Home() {
           <div className="flex justify-start">
             <button
               onClick={handleSubmitTeam}
-              disabled={isSubmitting}
-              className="!bg-[#1a1a2f] !rounded-lg !px-6 !py-2 !text-white !font-semibold hover:bg-green-600 border border-green-400 transition disabled:opacity-50 w-full sm:w-auto"
+              disabled={isSubmitting || !connected || selectedPlayers.length !== 5}
+              className={`!rounded-lg !px-6 !py-2 !text-white !font-semibold transition w-full sm:w-auto ${
+                isSubmitting || !connected || selectedPlayers.length !== 5
+                  ? "!bg-gray-700 opacity-50 cursor-not-allowed"
+                  : "!bg-[#1a1a2f] hover:bg-green-600 border border-green-400"
+              }`}
             >
-              {isSubmitting ? "Submitting..." : "Submit Team"}
+              {!connected ? "Connect Wallet to Submit" : isSubmitting ? "Submitting..." : "Submit Team"}
             </button>
           </div>
 
@@ -138,4 +159,3 @@ export default function Home() {
     </div>
   );
 }
-

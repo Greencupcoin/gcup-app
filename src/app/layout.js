@@ -1,8 +1,8 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { WalletContextProvider } from "../components/WalletProvider";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { Toaster } from "react-hot-toast";
+import ClientLayout from "../components/ClientLayout";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,12 +15,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter.className} bg-[#0a0a1a] text-white min-h-screen`}>
-        <WalletContextProvider>
+        <ClientLayout>
           <main className="container mx-auto px-4 py-8">
             {children}
           </main>
-          <Toaster position="top-center" />
-        </WalletContextProvider>
+        </ClientLayout>
       </body>
     </html>
   );
