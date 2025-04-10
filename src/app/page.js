@@ -12,7 +12,7 @@ import { Jura } from "next/font/google";
 const jura = Jura({ subsets: ["latin"] });
 
 export default function Home() {
-  const { publicKey, connected, connecting, disconnect } = useWallet();
+  const { publicKey, connected } = useWallet();
   const [gcupBalance, setGcupBalance] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedPlayers, setSelectedPlayers] = useState([]);
