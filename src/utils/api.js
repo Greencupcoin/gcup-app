@@ -1,6 +1,5 @@
 // Use your live backend as the default
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://gcup-backend.onrender.com";
-const GCUP_MINT_ADDRESS = "Bs7k2iTXZLST6JcJr91g2wGjEKm1LwG7L6Kbggkcvxk";
 
 /**
  * Fetches the golf tournament field and metadata.
@@ -26,9 +25,8 @@ export async function submitTeam({ wallet_address, players }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        wallet_address, // ✅ Match backend expectation
+        wallet_address,
         players,
-        mint_address: GCUP_MINT_ADDRESS,
       }),
     });
 
