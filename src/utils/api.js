@@ -23,6 +23,8 @@ export async function submitTeam({ wallet_address, players }) {
   console.log("📦 Submitting to backend:", {
     wallet_address,
     players,
+    playerCount: players?.length || 0,
+    playerKeys: players?.[0] ? Object.keys(players[0]) : [],
   });
 
   try {
