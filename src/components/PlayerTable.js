@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { fetchGolfField } from "../utils/api";
-import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSubmit, isSubmitting }) {
   const { publicKey, connected } = useWallet();
@@ -29,6 +29,11 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
 
   useEffect(() => {
     if (!hasSubmittedTeam) return;
+
+    setTimeout(() => {
+      fetchScoring(); // trigger once after 1 second to avoid early wallet call
+    }, 1000);
+
     const interval = setInterval(() => {
       fetchScoring();
     }, 60000);
@@ -39,11 +44,7 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
     try {
       setLoading(true);
       const data = await fetchGolfField();
-
-      if (!data.players || !Array.isArray(data.players)) {
-        throw new Error("Invalid data.players format");
-      }
-
+      if (!data.players || !Array.isArray(data.players)) throw new Error("Invalid data.players format");
       setPlayers(data.players);
       setError(null);
     } catch (err) {
@@ -55,28 +56,34 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
   };
 
   const fetchScoring = async () => {
-    if (!connected || !publicKey) return;
+    if (!connected || !publicKey || typeof publicKey.toString !== "function") {
+      console.warn("⏳ Wallet not ready for scoring...");
+      return;
+    }
 
     try {
       const res = await fetch("https://gcup-backend.onrender.com/parsed-scores");
       const data = await res.json();
       const newLogs = [];
 
+      const normalize = (str) => str.toLowerCase().replace(/[^a-z]/g, "");
+
       for (const player of selectedPlayers) {
         const result = data.find(
-          (entry) => entry.player.toLowerCase() === player.name.toLowerCase()
+          (entry) => normalize(entry.player) === normalize(player.name)
         );
+
+        console.log("👤 Checking:", player.name);
+        console.log("🔍 Matched with:", result?.player);
+        console.log("📦 Events:", result?.scoring_events);
 
         if (result && result.scoring_events) {
           for (const event of result.scoring_events) {
             const value = SCORING_MAP[event];
             if (typeof value !== "number") continue;
 
-            // Prevent duplicate scoring
             const alreadyLogged = scoreLog.some(
-              (log) =>
-                log.player === player.name &&
-                log.event === event
+              (log) => log.player === player.name && log.event === event
             );
             if (alreadyLogged) continue;
 
@@ -87,7 +94,6 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
               timestamp: new Date().toISOString(),
             });
 
-            // Mint or burn token
             await fetch("https://gcup-backend.onrender.com/api/mint-or-burn", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
