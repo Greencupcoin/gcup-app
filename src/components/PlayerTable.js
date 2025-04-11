@@ -6,6 +6,10 @@ import { useWallet } from "@solana/wallet-adapter-react";
 
 export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSubmit, isSubmitting }) {
   const { publicKey, connected } = useWallet();
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+  if (!hydrated) return null;
+
   const [players, setPlayers] = useState([]);
   const [scoreLog, setScoreLog] = useState([]);
   const [loading, setLoading] = useState(true);
