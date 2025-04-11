@@ -7,6 +7,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { submitTeam } from "../utils/api";
 import PlayerTable from "../components/PlayerTable";
+import TeamScoreBoard from "../components/TeamScoreBoard"; // ✅ NEW
 import { Jura } from "next/font/google";
 
 const jura = Jura({ subsets: ["latin"] });
@@ -132,6 +133,9 @@ export default function Home() {
 
         {/* ✅ Submit Button + Player Table */}
         <div className="mt-10 flex flex-col gap-4">
+          {/* ✅ Team Scoreboard */}
+          <TeamScoreBoard />
+
           {/* Submit Button (Always visible) */}
           <div className="flex justify-start">
             <button
