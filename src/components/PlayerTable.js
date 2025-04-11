@@ -1,15 +1,9 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { fetchGolfField } from "../utils/api";
 import { useWallet } from "@solana/wallet-adapter-react";
 
 export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSubmit, isSubmitting }) {
   const { publicKey, connected } = useWallet();
-  const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
-  if (!hydrated) return null;
-
   const [players, setPlayers] = useState([]);
   const [scoreLog, setScoreLog] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -107,7 +101,7 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
               }),
             });
 
-            console.log(`✅ ${event} for ${player.name}: ${value > 0 ? "Minted" : "Burned"} ${Math.abs(value)} GCUP`);
+            console.log(✅ ${event} for ${player.name}: ${value > 0 ? "Minted" : "Burned"} ${Math.abs(value)} GCUP);
           }
         }
       }
@@ -165,16 +159,16 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
           {players.map((player) => (
             <div
               key={player.player_id}
-              className={`p-4 rounded-lg border cursor-pointer transition-colors ${
+              className={p-4 rounded-lg border cursor-pointer transition-colors ${
                 selectedPlayers.find(p => p.player_id === player.player_id)
                   ? 'border-green-400 bg-green-400/10'
                   : 'border-gray-700 hover:border-gray-600'
-              }`}
+              }}
               onClick={() => handleSelect(player)}
             >
               <div className="flex items-center gap-2">
                 <img
-                  src={`https://flagcdn.com/24x18/${player.country_code?.toLowerCase()}.png`}
+                  src={https://flagcdn.com/24x18/${player.country_code?.toLowerCase()}.png}
                   alt={player.country}
                   className="w-5 h-4 object-cover rounded-sm"
                 />
@@ -204,11 +198,11 @@ export default function PlayerTable({ selectedPlayers, setSelectedPlayers, onSub
 
       <div className="flex justify-center mt-6">
         <button
-          className={`px-6 py-3 rounded-lg font-semibold transition ${
+          className={px-6 py-3 rounded-lg font-semibold transition ${
             selectedPlayers.length === 5 && connected && !isSubmitting
               ? 'bg-purple-600 text-white hover:bg-purple-700'
               : 'bg-gray-700 text-gray-400 cursor-not-allowed'
-          }`}
+          }}
           disabled={selectedPlayers.length !== 5 || !connected || isSubmitting}
           onClick={handleSubmit}
         >
